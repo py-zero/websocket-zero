@@ -134,7 +134,14 @@ class Client:
 
 
 def broadcast(op, group='__all__', **params):
+    """Broadcast a message to all clients in a group."""
     clients = list(Client.groups[group])
+    data = json.dumps({
+        'op': op,
+        **params,
+    })
+    for c in clients:
+        c.outqueue.put_nowait(data)
 
 
 async def index(request):
